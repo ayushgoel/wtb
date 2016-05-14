@@ -32,6 +32,9 @@ name: Agenda
 --
 
 6. Model mirrored in NSManagedObject's definition
+--
+
+7. Swift 3's impact on these ideas
 
 ???
 
