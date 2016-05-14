@@ -1,20 +1,23 @@
 class: center, middle
 
-# My Awesome Presentation
+# Swifty Core Data
+
+Making things a bit more bearable
 
 ???
 
-Notes for the _first_ slide!
+Title slide
 
 ---
 
 # Agenda
 
-1. Introduction
-2. Deep-dive
-3. ...
+1. Core data stack
+2. NSManagedObject extensions
+3. Protocol extensions to the rescue
+4. Moc synchronizer
+5. Protocol tests makes it easier to test these NSManagedObject's functionalities
+6. Model mirrored in NSManagedObject's definition
 
-[NOTE]: Note that you need remark.js alongside this html file, but no internet connection.
 ---
 
-# Introduction
