@@ -239,6 +239,15 @@ extension Entity {
 }
 ```
 ---
+class: center, middle
+
+###A gotcha I consider a boon
+
+Since the protocol extension method returns an instance of type `Self?`, the Swift compiler would not allow any non-final class to use this default implementation!
+
+This because, any non-final class `C` is unable to say that when `C` and its subclass `S` conform to the protocol, what type is `Self`.
+
+---
 Getting a `Task` now becomes:
 
 ```
