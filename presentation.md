@@ -329,3 +329,68 @@ extension EntityWithID {
 ```
 
 We have kept the convenience initializer private to this file since it should not be needed outside.
+---
+The previous approach has a serious flaw.
+Even though we are declaring `Entity` as a protocol, we are binding it to `NSManagedObjectContext`!
+
+What is a protocol if not freedom?
+---
+We redefine `Entity` with an `associatedType Context`.
+
+```
+protocol Entity: class {
+  associatedtype Context
+}
+```
+
+Now any class conforming to the protocol defines its own context to use. So your `Entity` could be using `NSUserDefaults` as Context and the protocol would not bat an eye!
+---
+Following the naming convention, we move the context to the latter position in function declarations.
+
+```
+protocol Entity: class {
+  static func entityName() -> String
+  static func object(predicate: NSPredicate?, context: Context) -> Self?
+  static func confidentObject(predicate: NSPredicate?, context: Context) -> Self
+}
+```
+---
+This also updates our protocol extension
+
+```
+extension Entity where Context == NSManagedObjectContext {
+  static func entityName() -> String {
+    return NSStringFromClass(self).componentsSeparatedByString(".").last!
+  }
+
+  static func object(predicate: NSPredicate?, context: Context) -> Self? {
+    let req = NSFetchRequest(entityName: entityName())
+    req.predicate = predicate
+    guard let result = try? context.executeFetchRequest(req) else {
+      logger.error("Error getting object of entity \(self)")
+      return nil
+    }
+    assert(result.count <= 1)
+    return result.first as? Self
+  }
+
+  static func confidentObject(predicate: NSPredicate?, context: Context) -> Self {
+    if let l = object(predicate, context: context) {
+      return l
+    } else {
+      return NSEntityDescription.insertNewObjectForEntityForName(entityName(), inManagedObjectContext: context) as! Self
+    }
+  }
+}
+```
+---
+Note that we can not use a `where` clause checking for class type. Protocol extensions can not give a default `typealias` thus making `Context` unknown to our function implementations.
+
+```
+*extension Entity where Self: NSManagedObject {
+  // Ambiguous Context
+  static func object(predicate: NSPredicate?, context: Context) -> Self? {
+    //....
+  }
+}
+```
