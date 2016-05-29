@@ -2,9 +2,9 @@ class: center, middle
 
 # Swifty Core Data
 
-Making things a bit more bearable
+####Use Swift features to help with Core Data
 
-.footnote[.red.bold[*] Important footnote]
+.footnote[.red.bold[*] You don't need to be using Core Data currently to understand the presentation.]
 
 ???
 
@@ -16,381 +16,474 @@ name: Agenda
 
 # Agenda
 
-1. Core data stack
-2. NSManagedObject extensions: Protocol extensions to the rescue
-3. Moc synchronizer
-4. Protocol tests makes it easier to test these NSManagedObject's functionalities
-5. Model mirrored in NSManagedObject's definition
-6. Swift 3's impact on these ideas
+1. NSManagedObject extensions: Protocol extensions to the rescue
+2. Using Protocols to hide away persistence layer
+3. Testing the created protocols
+4. Swift 3's impact on these ideas
 
 ???
 
 The agenda to be followed in the presentation
 ---
-
-`NSManagedObject`
-
-```
-class Task: NSManagedObject {
-
-  @NSManaged var id: NSNumber
-  @NSManaged var checklistID: NSNumber // List ID
-  @NSManaged private var status: NSNumber // Private status
-
-  @NSManaged var list: List
-  @NSManaged var parentTask: Task
-  @NSManaged var tasks: NSSet
-
-}
-```
----
-
-`NSManagedObject`
+class: middle
 
 ```
 class Task: NSManagedObject {
-
   @NSManaged var id: NSNumber
-  @NSManaged var checklistID: NSNumber // List ID
-* @NSManaged private var status: NSNumber // Private status
-
-  @NSManaged var list: List
-  @NSManaged var parentTask: Task
-  @NSManaged var tasks: NSSet
-
+  @NSManaged var text: String
 }
 ```
+
+???
+Let us take a sample class `Task` which we want to save in Core Data.
+Class has an `id` and text.
 ---
-
-The private status is accessible to outside world via an *Enum*. This so that the value of the variable remains valid, always.
-
-```
-enum TaskStatus: Int {
-  case Open
-  case Closed
-  case Invalidated
-  case Unknown
-}
-```
 ```
 extension Task {
-  var taskStatus: TaskStatus {
-    get {
-      if let s = TaskStatus(rawValue: status.integerValue) {
-        return s
-      } else {
-        return .Unknown
-      }
+  class func object(managedObjectContext: NSManagedObjectContext,
+                    predicate: NSPredicate?)
+                    -> Task? {
+    let fetchRequest = NSFetchRequest(entityName: "Task")
+    fetchRequest.predicate = predicate
+    guard let result = try? managedObjectContext.executeFetchRequest(fetchRequest) else {
+      print("Error getting object of entity \(self)")
+      return nil
     }
-    set {
-      status = newValue.rawValue as NSNumber
-    }
+    assert(result.count <= 1)
+    return result.first as? Task
   }
 }
-
 ```
 
-[Note]: The new accessor is made available via an extension so that it doesn't pollute the Object file.
+We define a required method:
+
+???
+We define a single method on class `Task` which gives back an optional `Task` based on provided predicate.
+The method
+
+---
+class: middle
+
+```
+extension Task {
+* class func object(managedObjectContext: NSManagedObjectContext,
+                    predicate: NSPredicate?)
+                    -> Task? {
+    let fetchRequest = NSFetchRequest(entityName: "Task")
+    fetchRequest.predicate = predicate
+    guard let result = try? managedObjectContext.executeFetchRequest(fetchRequest) else {
+      print("Error getting object of entity \(self)")
+      return nil
+    }
+    assert(result.count <= 1)
+    return result.first as? Task
+  }
+}
+```
+
+####1. This function is tied to `NSManagedObjectContext` and would need a rewrite if we decide to change the persistence layer.
+
+---
+class: middle
+
+```
+extension Task {
+  class func object(managedObjectContext: NSManagedObjectContext,
+                    predicate: NSPredicate?)
+*                    -> Task? {
+    let fetchRequest = NSFetchRequest(entityName: "Task")
+    fetchRequest.predicate = predicate
+    guard let result = try? managedObjectContext.executeFetchRequest(fetchRequest) else {
+      print("Error getting object of entity \(self)")
+      return nil
+    }
+    assert(result.count <= 1)
+    return result.first as? Task
+  }
+}
+```
+
+####2. This function would need to be copied to any other class too that requires it.
+
 ---
 class: center, middle
 
-Add slide related to optionality of fields on an NSManagedObject.
+So we have a non-reusable strongly tied method.
 
-The optionality can be changed from `xcdatamodeld`.
+--
+
+####Let's fix it...
+
 ---
-Extension 1
+class: middle
 
 ```
 extension NSManagedObject {
-
-  class func entityName() -> String {
-    return NSStringFromClass(self).componentsSeparatedByString(".").last!
-  }
-
-}
-```
-
-Get entity name for a NSManagedObject.
----
-Extension 2
-
-```
-extension NSManagedObject {
-
-  class func object(moc: NSManagedObjectContext, predicate: NSPredicate?) -> NSManagedObject? {
-    let req = NSFetchRequest(entityName: entityName())
-    req.predicate = predicate
-
-    guard let result = try? moc.executeFetchRequest(req) else {
-      logger.error("Error getting object of entity \(self)")
+  class func managedObject(managedObjectContext: NSManagedObjectContext,
+                           predicate: NSPredicate?)
+                           -> NSManagedObject? {
+    let fetchRequest = NSFetchRequest(entityName: "Task")
+    fetchRequest.predicate = predicate
+    guard let result = try? managedObjectContext.executeFetchRequest(fetchRequest) else {
+      print("Error getting object of entity \(self)")
       return nil
     }
-
     assert(result.count <= 1)
     return result.first as? NSManagedObject
   }
-
 }
 ```
 
-Get an object using a predicate along with `NSManagedObjectContext`.
+####We move this function to an extension on `NSManagedObject` instead.
+*Easy, Right?*
+
 ---
-Getting a Task becomes:
+class: middle
 
 ```
-Task.object(moc, predicate: nil)
-* as! Task // Ugh!
-```
----
-Extension 3
-
-```
-extension NSManagedObject {
-
-  class func confidentObject(moc: NSManagedObjectContext, predicate: NSPredicate?) -> NSManagedObject {
-    if let l = object(moc, predicate: predicate) {
-      return l
-    } else {
-      return NSEntityDescription.insertNewObjectForEntityForName(entityName(), inManagedObjectContext: moc)
+*extension NSManagedObject {
+  class func managedObject(managedObjectContext: NSManagedObjectContext,
+                           predicate: NSPredicate?)
+                           -> NSManagedObject? {
+    let fetchRequest = NSFetchRequest(entityName: "Task")
+    fetchRequest.predicate = predicate
+    guard let result = try? managedObjectContext.executeFetchRequest(fetchRequest) else {
+      print("Error getting object of entity \(self)")
+      return nil
     }
+    assert(result.count <= 1)
+    return result.first as? NSManagedObject
   }
-
 }
 ```
 
-Get an object confidently i.e. if it doesn't exist, create one and return it.
+####1. Every `NSManagedObject` class gets it, by default, even if we don't want it to.
+
 ---
-Extension 4
-
-Using extension on `NSPredicate`
-```
-private extension NSPredicate {
-  private convenience init(id: NSNumber) {
-    self.init(format: "id == %@", argumentArray: [id])
-  }
-}
-```
+class: middle
 
 ```
-// MARK: - Works only on objects that have an id property.
 extension NSManagedObject {
-  class func confidentObject(moc: NSManagedObjectContext, id: NSNumber) -> NSManagedObject {
-    return confidentObject(moc, predicate: NSPredicate(id: id))
+* class func managedObject(managedObjectContext: NSManagedObjectContext,
+                           predicate: NSPredicate?)
+                           -> NSManagedObject? {
+    let fetchRequest = NSFetchRequest(entityName: "Task")
+    fetchRequest.predicate = predicate
+    guard let result = try? managedObjectContext.executeFetchRequest(fetchRequest) else {
+      print("Error getting object of entity \(self)")
+      return nil
+    }
+    assert(result.count <= 1)
+    return result.first as? NSManagedObject
   }
 }
 ```
+
+####2. We are still tied up with Core Data.
+####Function `managedObject` is not available to classes not using Core Data as persistence layer.
+
+---
+class: middle
+
+```
+extension NSManagedObject {
+  class func managedObject(managedObjectContext: NSManagedObjectContext,
+                           predicate: NSPredicate?)
+*                          -> NSManagedObject? {
+    let fetchRequest = NSFetchRequest(entityName: "Task")
+    fetchRequest.predicate = predicate
+    guard let result = try? managedObjectContext.executeFetchRequest(fetchRequest) else {
+      print("Error getting object of entity \(self)")
+      return nil
+    }
+    assert(result.count <= 1)
+    return result.first as? NSManagedObject
+  }
+}
+```
+
+####3. The return type of the function is `NSManagedObject`. So whenever you want to use it, you type cast it.
+
+```
+Task.managedObject(mainManagedObjectContext, predicate: nil)
+* as! Task
+```
+
+---
+class: middle
+
+```
+extension NSManagedObject {
+  extension NSManagedObject {
+    class func managedObject(managedObjectContext: NSManagedObjectContext,
+                             predicate: NSPredicate?)
+                             -> NSManagedObject? {
+*   let fetchRequest = NSFetchRequest(entityName: "Task")
+    fetchRequest.predicate = predicate
+    guard let result = try? managedObjectContext.executeFetchRequest(fetchRequest) else {
+      print("Error getting object of entity \(self)")
+      return nil
+    }
+    assert(result.count <= 1)
+    return result.first as? NSManagedObject
+  }
+}
+```
+
+####4. That is *NOT* the name of all our entities.
+
+---
+class: middle
+
+Let us just fix the last one, it isn't so bad..
+
+```
+extension NSManagedObject {
+  class func entityName() -> String {
+    return NSStringFromClass(self)
+*   .componentsSeparatedByString(".").last! // *
+  }
+}
+```
+
+.footnote[.simple[*] Module name is prepended to string representations of classes in swift]
+
 ---
 class: center, middle
 
-Now let us use protocol extensions to help us make these extension methods play a bit more nicely.
+###Hmm, so extending NSManagedObject wasn't a very good solution..
+--
+
+*I wouldn't have added so many negative points to my solution! So obvious 😁*
 ---
-We create a protocol `Entity`. Any object that wants to work with our model layer is an Entity.
+class: center, middle
+
+Enter,
+
+#Protocol Extensions
+##Protocol Extensions
+###Protocol Extensions
+...
+
+---
+class: center, middle
+
+But first we need a protocol!
+
+What better than to call it
+
+#Entity
+
+---
+
+Any object that wants to work with our model layer is now an Entity.
 
 ```
-protocol Entity: class {
+protocol Entity {
 }
 ```
 
-Note that the protocol inherits from `class`, meaning that only classes can inherit from this protocol.
-
-This is based on the assumption that `struct` and `enum` would never be enough to act like an Entity.
 ---
-Once we have our class protocol, we create the Extension 1:
 
 ```
-protocol Entity: class {
-  static func entityName() -> String
+protocol Entity {
+  static func name() -> String
 }
 ```
-```
-extension Entity {
 
+The first requirement of the protocol is to have a name.
+
+---
+
+We know what this method has to do for `NSManagedObject`. Let us add this to an extension, **on protocol**.
+
+```
+extension Entity
+* where Self: NSManagedObject {
   static func entityName() -> String {
     return NSStringFromClass(self).componentsSeparatedByString(".").last!
   }
-
 }
 ```
-Do note that this is the default implementation for the protocol method. Any conforming class can still override it (without explicitly saying override).
+
 ---
-Now the Extension 2
 
 ```
-protocol Entity: class {
-
-  static func object(moc: NSManagedObjectContext, predicate: NSPredicate?) -> Self?
-
+protocol Entity {
+  static func object(managedObjectContext: NSManagedObjectContext,
+                     predicate: NSPredicate?)
+                     -> NSManagedObject?
 }
 ```
+
+???
+
+Tied to core data
+Returns a NSManagedObject
+---
+
 ```
-extension Entity {
-  static func object(moc: NSManagedObjectContext, predicate: NSPredicate?) -> Self? {
-    let req = NSFetchRequest(entityName: entityName())
-    req.predicate = predicate
-
-    guard let result = try? moc.executeFetchRequest(req) else {
-      logger.error("Error getting object of entity \(Self)")
-      return nil
-    }
-
-    assert(result.count <= 1)
-    return result.first as? Self
-  }
+protocol Entity {
+  static func object(managedObjectContext: NSManagedObjectContext,
+                     predicate: NSPredicate?)
+                     -> Self?
 }
 ```
+
+---
+
+```
+protocol Entity {
+  static func object(managedObjectContext: NSManagedObjectContext,
+                     predicate: NSPredicate?)
+*                    -> Self?
+}
+```
+
+```
+Task.managedObject(mainManagedObjectContext, predicate: nil)
+```
+
+???
+The returned object is now of correct type.
+---
+
+`NSManagedObjectContext`
+##Why?
+
+???
+
+We are still asking the object from a NSManagedObjectContext. Skip that and lets start using context.
+
 ---
 class: center, middle
 
-###A gotcha I consider a boon
-
-Since the protocol extension method returns an instance of type `Self?`, the Swift compiler would not allow any non-final class to use this default implementation!
-
-This because, any non-final class `C` is unable to say that when `C` and its subclass `S` conform to the protocol, what type is `Self`.
+##Welcome associatedType
 
 ---
-Getting a `Task` now becomes:
 
 ```
-let task = Task.object(moc, predicate: nil) // Task?
-```
-
-Of course
-
-```
-extension Task: Entity {
-	// Yes, empty implementation.
-	// We are using the default implementation provided by the
-	// protocol extensions.
-}
-```
----
-Extension 3
-
-```
-protocol Entity: class {
-
-  static func confidentObject(moc: NSManagedObjectContext, predicate: NSPredicate?) -> Self
-
-}
-```
-```
-extension Entity {
-
-  static func confidentObject(moc: NSManagedObjectContext, predicate: NSPredicate?) -> Self {
-    if let l = object(moc, predicate: predicate) {
-      return l
-    } else {
-      return NSEntityDescription.insertNewObjectForEntityForName(
-*     	entityName(), // Swift compiler knows about this method
-        inManagedObjectContext: moc)
-        as! Self // Typecast the raw NSManagedObject to our own type.
-    }
-  }
-
-}
-```
----
-Extension 4
-
-This is a bit tricky, because this extension demands the `NSManagedObject` to have a property named `id`.
-This might not be true for all our NSManagedObjects'.
-
-We didn't have an option before! The extension has to be on NSManagedObject, otherwise we need to make a superclass for all NSManagedObjects that define `id`. (Double Ugh!)
----
-We take the option of creating a new protocol (because we can!)
-
-```
-protocol EntityWithID: Entity {
-  static func confidentObject(moc: NSManagedObjectContext, id: NSNumber) -> Self
+protocol Entity {
+* associatedType Context
+* static func object(context: Context,
+                     predicate: NSPredicate?)
+                     -> Self?
 }
 ```
 
-Notice how shamelessly the protocol inherits from `Entity`.
+Finally no trace of Core data!
 
-Readability: Any class conforming to `EntityWithID` automagically conforms to `Entity`! Exactly what we wanted to convey to our code reader.
+???
+explain a bit about associatedType and how it is to be implemented by conforming classes.
+Get ready to implement a default implementation.
 
-Also, an `EntityWithID` can still get an object using custom predicate, `confidentObject(moc: predicate:)`.
 ---
-Finishing:
-
-```
-private extension NSPredicate {
-  private convenience init(id: NSNumber) {
-    self.init(format: "id == %@", argumentArray: [id])
-  }
-}
-```
-```
-extension EntityWithID {
-  static func confidentObject(moc: NSManagedObjectContext, id: NSNumber) -> Self {
-    return confidentObject(moc, predicate: NSPredicate(id: id))
-  }
-}
-```
-
-We have kept the convenience initializer private to this file since it should not be needed outside.
----
-The previous approach has a serious flaw.
-Even though we are declaring `Entity` as a protocol, we are binding it to `NSManagedObjectContext`!
-
-What is a protocol if not freedom?
----
-We redefine `Entity` with an `associatedType Context`.
-
-```
-protocol Entity: class {
-  associatedtype Context
-}
-```
-
-Now any class conforming to the protocol defines its own context to use. So your `Entity` could be using `NSUserDefaults` as Context and the protocol would not bat an eye!
----
-Following the naming convention, we move the context to the latter position in function declarations.
-
-```
-protocol Entity: class {
-  static func entityName() -> String
-  static func object(predicate: NSPredicate?, context: Context) -> Self?
-  static func confidentObject(predicate: NSPredicate?, context: Context) -> Self
-}
-```
----
-This also updates our protocol extension
 
 ```
 extension Entity where Context == NSManagedObjectContext {
-  static func entityName() -> String {
-    return NSStringFromClass(self).componentsSeparatedByString(".").last!
-  }
-
   static func object(predicate: NSPredicate?, context: Context) -> Self? {
-    let req = NSFetchRequest(entityName: entityName())
-    req.predicate = predicate
-    guard let result = try? context.executeFetchRequest(req) else {
-      logger.error("Error getting object of entity \(self)")
-      return nil
-    }
-    assert(result.count <= 1)
-    return result.first as? Self
+  let req = NSFetchRequest(entityName: entityName())
+  req.predicate = predicate
+  guard let result = try? context.executeFetchRequest(req) else {
+    logger.error("Error getting object of entity \(self)")
+    return nil
   }
-
-  static func confidentObject(predicate: NSPredicate?, context: Context) -> Self {
-    if let l = object(predicate, context: context) {
-      return l
-    } else {
-      return NSEntityDescription.insertNewObjectForEntityForName(entityName(), inManagedObjectContext: context) as! Self
-    }
+  assert(result.count <= 1)
+  return result.first as? Self
   }
 }
 ```
+
 ---
-Note that we can not use a `where` clause checking for class type. Protocol extensions can not give a default `typealias` thus making `Context` unknown to our function implementations.
 
 ```
-*extension Entity where Self: NSManagedObject {
-  // Ambiguous Context
-  static func object(predicate: NSPredicate?, context: Context) -> Self? {
-    //....
+extension Entity where Context == NSManagedObjectContext {
+```
+
+???
+Explain that this is available only when context is NSManagedObjectContext
+
+---
+
+```
+static func object(predicate: NSPredicate?, context: Context) -> Self? {
+```
+
+???
+Explain that Context and NSManagedObjectContext are same because of previous statement.
+
+---
+
+```
+let req = NSFetchRequest(entityName: entityName())
+```
+
+???
+Explain that entityName() is given in protocol and thus safe to call by the extension method.
+
+---
+
+```
+return result.first as? Self
+```
+
+???
+Explain type cast required because `executeFetchRequest` returns `[AnyObject]`.
+
+---
+
+# Conformance
+
+```
+extension Task: Entity {
+  typealias Context = NSManagedObjectContext
+}
+```
+
+???
+Explain how it gets entityName() and the default implementation for `object`.
+
+---
+
+##Gotcha #1
+
+An associatedType can not be fulfilled by the protocol extension
+
+???
+And thus we require to do the typealias
+
+---
+
+##Gotcha #2
+
+Since the protocol extension method returns an instance of type `Self?`, the Swift compiler would not allow any non-final class to use this default implementation!
+
+???
+This because, any non-final class `C` is unable to say that when `C` and its subclass `S` conform to the protocol, what type is `Self`.
+
+---
+
+Do note that this is the default implementation for the protocol method. Any conforming class can still override it (without explicitly saying override).
+
+Now any class conforming to the protocol defines its own context to use. So your `Entity` could be using `NSUserDefaults` as Context and the protocol would not bat an eye!
+
+---
+
+```
+final class Account {
+  typealias Context = NSUserDefaults
+
+  static func entityName() -> String {
+    return "KeyForAccountInUserDefaults"
+  }
+
+  class func object(predicate: NSPredicate?,
+                    context: Context) -> Account? {
+    return context.objectForKey(entityName()) as? Account
   }
 }
 ```
+
+???
+Explain how the persistence layer has been abstracted out. This class's object
+can now be kept in an array [Entity] and worked on by functions.

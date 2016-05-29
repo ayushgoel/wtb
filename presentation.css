@@ -1,5 +1,5 @@
-/*body { 
-	font-family: 'Serif'; 
+/*body {
+	font-family: 'Serif';
 }
 
 h1, h2, h3 {
@@ -7,6 +7,20 @@ h1, h2, h3 {
 	font-weight: normal;
 }
 
-.remark-code, .remark-inline-code { 
+.remark-code, .remark-inline-code {
 	font-family: 'Monospaced';
 }*/
+
+.red {
+	color: red;
+}
+
+.bold {
+	font-weight: bold;
+}
+
+.footnote {
+	font-size: smaller;
+}
+
+.simple {}
