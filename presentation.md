@@ -380,8 +380,30 @@ Get ready to implement a default implementation.
 ---
 
 ```
+protocol Entity {
+  associatedType Context
+  static func object(predicate: NSPredicate?,
+*                    context: Context)
+                     -> Self?
+}
+```
+
+I would have liked to keep it this way, but then I realized Apple keeps context as first param too.
+
+```
+func CGContextSetFlatness(_ c: CGContext?, _ flatness: CGFloat)
+func CGContextSetLineDash(_ c: CGContext?, _ phase: CGFloat, _ lengths: UnsafePointer<CGFloat>, _ count: Int)
+func CGContextSetInterpolationQuality(_ c: CGContext?, _ quality: CGInterpolationQuality)
+//...
+```
+
+???
+
+---
+
+```
 extension Entity where Context == NSManagedObjectContext {
-  static func object(predicate: NSPredicate?, context: Context) -> Self? {
+  static func object(context: Context, predicate: NSPredicate?) -> Self? {
   let req = NSFetchRequest(entityName: entityName())
   req.predicate = predicate
   guard let result = try? context.executeFetchRequest(req) else {
@@ -406,7 +428,7 @@ Explain that this is available only when context is NSManagedObjectContext
 ---
 
 ```
-static func object(predicate: NSPredicate?, context: Context) -> Self? {
+static func object(context: Context, predicate: NSPredicate?) -> Self? {
 ```
 
 ???
@@ -477,8 +499,8 @@ final class Account {
     return "KeyForAccountInUserDefaults"
   }
 
-  class func object(predicate: NSPredicate?,
-                    context: Context) -> Account? {
+  class func object(context: Context,
+                    predicate: NSPredicate?) -> Account? {
     return context.objectForKey(entityName()) as? Account
   }
 }
