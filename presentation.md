@@ -388,7 +388,7 @@ protocol Entity {
 }
 ```
 
-I would have liked to keep it this way, but then I realized Apple keeps context as first param too.
+I would have liked to keep it this way, but then I realized Apple keeps context as first param.
 
 ```
 func CGContextSetFlatness(_ c: CGContext?, _ flatness: CGFloat)
