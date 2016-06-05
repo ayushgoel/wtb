@@ -509,3 +509,49 @@ final class Account {
 ???
 Explain how the persistence layer has been abstracted out. This class's object
 can now be kept in an array [Entity] and worked on by functions.
+
+---
+
+Testing
+
+---
+
+No changes to existing test we have
+--
+Except name changes maybe
+???
+(to the new protocol methods)
+
+---
+The test can choose to ignore the protocol totally.
+The conforming classes/structs can be tested with the methods they implement.
+---
+
+```
+func testEntityName() {
+  XCTAssertEqual("Account", Account.entityName())
+}
+```
+
+---
+
+```
+func testObjectSavedIsReturned() {
+  let moc = testContext()
+  guard let account = NSEntityDescription.insertNewObjectForEntityForName(Account.entityName(), inManagedObjectContext: moc) as? Account else {
+    assertionFailure()
+    return
+  }
+  account.id = NSNumber(unsignedInt: arc4random())
+  moc.saveContext()
+
+* guard let retrievedAccount = Account.object(nil, context: moc) else {
+    assertionFailure()
+    return
+  }
+  XCTAssertEqual(retrievedAccount.id, account.id)
+}
+```
+
+???
+might have named the function account before which changed to this.
