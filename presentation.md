@@ -2,28 +2,22 @@ class: center, middle
 
 # Swifty Core Data
 
-####Use Swift features to help with Core Data
-
-.footnote[.red.bold[*] You don't need to be using Core Data currently to understand the presentation.]
+####How I used protocol and protocol extension to help with Core Data
 
 ???
 
 Title slide
-
----
 
 name: Agenda
 
 # Agenda
 
 1. NSManagedObject extensions: Protocol extensions to the rescue
+How I used protocol extension to extend data layer classes and have them some commonly used functions.
 2. Using Protocols to hide away persistence layer
 3. Testing the created protocols
 4. Swift 3's impact on these ideas
 
-???
-
-The agenda to be followed in the presentation
 ---
 class: middle
 
@@ -38,6 +32,8 @@ class Task: NSManagedObject {
 Let us take a sample class `Task` which we want to save in Core Data.
 Class has an `id` and text.
 ---
+class: middle
+
 ```
 extension Task {
   class func object(managedObjectContext: NSManagedObjectContext,
@@ -55,7 +51,7 @@ extension Task {
 }
 ```
 
-We define a required method:
+We define a method we require
 
 ???
 We define a single method on class `Task` which gives back an optional `Task` based on provided predicate.
@@ -98,7 +94,7 @@ extension Task {
       return nil
     }
     assert(result.count <= 1)
-    return result.first as? Task
+*   return result.first as? Task
   }
 }
 ```
@@ -106,11 +102,34 @@ extension Task {
 ####2. This function would need to be copied to any other class too that requires it.
 
 ---
+class: middle
+
+```
+extension Task {
+  class func object(managedObjectContext: NSManagedObjectContext,
+                    predicate: NSPredicate?)
+                     -> Task? {
+*   let fetchRequest = NSFetchRequest(entityName: "Task")
+    fetchRequest.predicate = predicate
+    guard let result = try? managedObjectContext.executeFetchRequest(fetchRequest) else {
+      print("Error getting object of entity \(self)")
+      return nil
+    }
+    assert(result.count <= 1)
+    return result.first as? Task
+  }
+}
+```
+
+####3. And when moving, remember to change the entity name, the compiler won't help you there.
+
+---
 class: center, middle
 
 So we have a non-reusable strongly tied method.
 
---
+---
+class: center, middle
 
 ####Let's fix it...
 
@@ -134,8 +153,15 @@ extension NSManagedObject {
 }
 ```
 
+???
+
+First attempt
 ####We move this function to an extension on `NSManagedObject` instead.
-*Easy, Right?*
+
+---
+class: middle, center
+
+###*Easy, Right?*
 
 ---
 class: middle
@@ -233,9 +259,28 @@ extension NSManagedObject {
 ####4. That is *NOT* the name of all our entities.
 
 ---
-class: middle
+class: center, middle
 
-Let us just fix the last one, it isn't so bad..
+###Hmm, so extending NSManagedObject wasn't a very good solution..
+
+---
+class: middle, center
+
+####Easy, Right?
+### *NO*
+
+???
+*I wouldn't have added so many negative points to my solution! So obvious 😁*
+
+---
+class: middle, center
+
+Let us just fix the entity name issue first,
+
+*it isn't so bad..*
+
+---
+class: middle
 
 ```
 extension NSManagedObject {
@@ -249,12 +294,40 @@ extension NSManagedObject {
 .footnote[.simple[*] Module name is prepended to string representations of classes in swift]
 
 ---
-class: center, middle
+class: middle
 
-###Hmm, so extending NSManagedObject wasn't a very good solution..
---
+```
+extension NSManagedObject {
+  extension NSManagedObject {
+    class func managedObject(managedObjectContext: NSManagedObjectContext,
+                             predicate: NSPredicate?)
+                             -> NSManagedObject? {
+*   let fetchRequest = NSFetchRequest(entityName: entityName())
+    fetchRequest.predicate = predicate
+    guard let result = try? managedObjectContext.executeFetchRequest(fetchRequest) else {
+      print("Error getting object of entity \(self)")
+      return nil
+    }
+    assert(result.count <= 1)
+    return result.first as? NSManagedObject
+  }
+}
+```
 
-*I wouldn't have added so many negative points to my solution! So obvious 😁*
+---
+class: middle, center
+
+###*Entity name issue solved*
+
+##😪
+
+---
+class: middle, center
+
+####Back to original problem of getting managed classes to answer
+
+###`object`
+
 ---
 class: center, middle
 
@@ -268,15 +341,35 @@ Enter,
 ---
 class: center, middle
 
-But first we need a protocol!
+###But first we need a protocol!
 
-What better than to call it
+---
+class: center, middle
+
+###Let us start by naming the protocol
+
+---
+class: center, middle
 
 #Entity
 
 ---
+class: center, middle
 
-Any object that wants to work with our model layer is now an Entity.
+#👏
+
+???
+Some well deserved applause for myself
+
+---
+class: middle, center
+
+Any object that wants to work with our model layer is now an
+
+###`Entity`
+
+---
+class: middle
 
 ```
 protocol Entity {
@@ -284,6 +377,7 @@ protocol Entity {
 ```
 
 ---
+class: middle
 
 ```
 protocol Entity {
@@ -294,20 +388,49 @@ protocol Entity {
 The first requirement of the protocol is to have a name.
 
 ---
+class: middle, center
 
-We know what this method has to do for `NSManagedObject`. Let us add this to an extension, **on protocol**.
+###We know what this method has to do for `NSManagedObject`
+
+???
+remind about entityName slide
+
+---
+class: middle
+
+Let us add this to an extension, **on protocol**.
 
 ```
 extension Entity
-* where Self: NSManagedObject {
+  where Self: NSManagedObject {
   static func entityName() -> String {
-    return NSStringFromClass(self).componentsSeparatedByString(".").last!
+    return NSStringFromClass(self)
+    .componentsSeparatedByString(".").last!
   }
 }
 ```
 
 ---
+class: middle
 
+```
+extension Entity
+* where Self: NSManagedObject {
+  static func entityName() -> String {
+    return NSStringFromClass(self)
+    .componentsSeparatedByString(".").last!
+  }
+}
+```
+
+???
+
+Explain the where clause
+also tell what self here represents
+---
+class: middle
+
+Next we add the method `object`
 ```
 protocol Entity {
   static func object(managedObjectContext: NSManagedObjectContext,
@@ -321,16 +444,7 @@ protocol Entity {
 Tied to core data
 Returns a NSManagedObject
 ---
-
-```
-protocol Entity {
-  static func object(managedObjectContext: NSManagedObjectContext,
-                     predicate: NSPredicate?)
-                     -> Self?
-}
-```
-
----
+class: middle
 
 ```
 protocol Entity {
@@ -340,15 +454,28 @@ protocol Entity {
 }
 ```
 
+???
+
+explain self reference
+
+---
+class: middle
+
 ```
-Task.managedObject(mainManagedObjectContext, predicate: nil)
+*Task
+.managedObject(mainManagedObjectContext, predicate: nil)
 ```
 
 ???
 The returned object is now of correct type.
 ---
+class: middle, center
 
-`NSManagedObjectContext`
+##Still using `NSManagedObjectContext`!
+
+---
+class: middle, center
+
 ##Why?
 
 ???
@@ -361,6 +488,7 @@ class: center, middle
 ##Welcome associatedType
 
 ---
+class: middle
 
 ```
 protocol Entity {
@@ -378,6 +506,7 @@ explain a bit about associatedType and how it is to be implemented by conforming
 Get ready to implement a default implementation.
 
 ---
+class: middle
 
 ```
 protocol Entity {
@@ -388,7 +517,11 @@ protocol Entity {
 }
 ```
 
-I would have liked to keep it this way, but then I realized Apple keeps context as first param.
+
+The order of the parameters is of significance here.
+
+Apple keeps context as first param and I have always found increased readability when I follow what Apple is doing. Just FWIW note.
+
 
 ```
 func CGContextSetFlatness(_ c: CGContext?, _ flatness: CGFloat)
@@ -399,7 +532,15 @@ func CGContextSetInterpolationQuality(_ c: CGContext?, _ quality: CGInterpolatio
 
 ???
 
+Just ask people to follow the convention.
+
 ---
+class: middle, center
+
+###Moving on
+
+---
+class: middle
 
 ```
 extension Entity where Context == NSManagedObjectContext {
@@ -416,7 +557,18 @@ extension Entity where Context == NSManagedObjectContext {
 }
 ```
 
+???
+
+Move to next slides for explanation
+
 ---
+class: middle, center
+
+###Too much code
+##Break it
+
+---
+class: middle
 
 ```
 extension Entity where Context == NSManagedObjectContext {
@@ -424,17 +576,22 @@ extension Entity where Context == NSManagedObjectContext {
 
 ???
 Explain that this is available only when context is NSManagedObjectContext
+where clause on associatedType
 
 ---
+class: middle
 
 ```
-static func object(context: Context, predicate: NSPredicate?) -> Self? {
+static func object(context: Context, predicate: NSPredicate?)
+-> Self? {
 ```
 
 ???
 Explain that Context and NSManagedObjectContext are same because of previous statement.
+so autocomplete FTW
 
 ---
+class: middle
 
 ```
 let req = NSFetchRequest(entityName: entityName())
@@ -444,6 +601,7 @@ let req = NSFetchRequest(entityName: entityName())
 Explain that entityName() is given in protocol and thus safe to call by the extension method.
 
 ---
+class: middle
 
 ```
 return result.first as? Self
@@ -453,8 +611,33 @@ return result.first as? Self
 Explain type cast required because `executeFetchRequest` returns `[AnyObject]`.
 
 ---
+class: middle
+
+```
+extension Entity where Context == NSManagedObjectContext {
+  static func object(context: Context, predicate: NSPredicate?) -> Self? {
+  let req = NSFetchRequest(entityName: entityName())
+  req.predicate = predicate
+  guard let result = try? context.executeFetchRequest(req) else {
+    logger.error("Error getting object of entity \(self)")
+    return nil
+  }
+  assert(result.count <= 1)
+  return result.first as? Self
+  }
+}
+```
+
+???
+Look at this again to see complete implementation
+
+---
+class: middle, center
 
 # Conformance
+
+---
+class: middle
 
 ```
 extension Task: Entity {
@@ -466,30 +649,40 @@ extension Task: Entity {
 Explain how it gets entityName() and the default implementation for `object`.
 
 ---
+class: middle, center
 
-##Gotcha #1
+####Gotcha #1
 
-An associatedType can not be fulfilled by the protocol extension
+###An associatedType can not be fulfilled by the protocol extension
 
 ???
 And thus we require to do the typealias
 
 ---
+class: middle, center
 
-##Gotcha #2
+####Gotcha #2
 
-Since the protocol extension method returns an instance of type `Self?`, the Swift compiler would not allow any non-final class to use this default implementation!
+###Since the protocol extension method returns an instance of type `Self?`, the Swift compiler would not allow any non-final class to use this default implementation!
 
 ???
 This because, any non-final class `C` is unable to say that when `C` and its subclass `S` conform to the protocol, what type is `Self`.
 
 ---
+class: middle, center
 
+##Override?
+
+???
 Do note that this is the default implementation for the protocol method. Any conforming class can still override it (without explicitly saying override).
+
+---
+class: middle, center
 
 Now any class conforming to the protocol defines its own context to use. So your `Entity` could be using `NSUserDefaults` as Context and the protocol would not bat an eye!
 
 ---
+class: middle
 
 ```
 final class Account {
