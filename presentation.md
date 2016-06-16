@@ -495,7 +495,10 @@ protocol Entity {
 }
 ```
 
-Finally no trace of Core data!
+---
+class: center, middle
+
+##Finally no trace of Core data!
 
 ???
 explain a bit about associatedType and how it is to be implemented by conforming classes.
@@ -700,21 +703,37 @@ Explain how the persistence layer has been abstracted out. This class's object
 can now be kept in an array [Entity] and worked on by functions.
 
 ---
+class: middle, center
 
-Testing
+#Testing
 
 ---
+class: middle, center
 
-No changes to existing test we have
---
-Except name changes maybe
+###No changes to existing tests
+
+---
+class: middle, center
+
+###Except name changes maybe
+###🤔
+
 ???
 (to the new protocol methods)
 
+Example: managedObject -> object
+
 ---
-The test can choose to ignore the protocol totally.
+class: middle, center
+
+###The tests can choose to ignore the protocol totally
+
+???
 The conforming classes/structs can be tested with the methods they implement.
+name changes maybe again
+
 ---
+class: middle
 
 ```
 func testEntityName() {
@@ -722,7 +741,10 @@ func testEntityName() {
 }
 ```
 
+???
+Example of protocol being ignored
 ---
+class: middle
 
 ```
 func testObjectSavedIsReturned() {
