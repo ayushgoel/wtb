@@ -240,19 +240,17 @@ class: middle
 
 ```
 extension NSManagedObject {
-  extension NSManagedObject {
-    class func managedObject(managedObjectContext: NSManagedObjectContext,
-                             predicate: NSPredicate?)
-                             -> NSManagedObject? {
+  class func managedObject(managedObjectContext: NSManagedObjectContext,
+                           predicate: NSPredicate?)
+                           -> NSManagedObject? {
 *   let fetchRequest = NSFetchRequest(entityName: "Task")
-    fetchRequest.predicate = predicate
-    guard let result = try? managedObjectContext.executeFetchRequest(fetchRequest) else {
-      print("Error getting object of entity \(self)")
-      return nil
-    }
-    assert(result.count <= 1)
-    return result.first as? NSManagedObject
+  fetchRequest.predicate = predicate
+  guard let result = try? managedObjectContext.executeFetchRequest(fetchRequest) else {
+    print("Error getting object of entity \(self)")
+    return nil
   }
+  assert(result.count <= 1)
+  return result.first as? NSManagedObject
 }
 ```
 
@@ -298,19 +296,17 @@ class: middle
 
 ```
 extension NSManagedObject {
-  extension NSManagedObject {
-    class func managedObject(managedObjectContext: NSManagedObjectContext,
-                             predicate: NSPredicate?)
-                             -> NSManagedObject? {
+  class func managedObject(managedObjectContext: NSManagedObjectContext,
+                           predicate: NSPredicate?)
+                           -> NSManagedObject? {
 *   let fetchRequest = NSFetchRequest(entityName: entityName())
-    fetchRequest.predicate = predicate
-    guard let result = try? managedObjectContext.executeFetchRequest(fetchRequest) else {
-      print("Error getting object of entity \(self)")
-      return nil
-    }
-    assert(result.count <= 1)
-    return result.first as? NSManagedObject
+  fetchRequest.predicate = predicate
+  guard let result = try? managedObjectContext.executeFetchRequest(fetchRequest) else {
+    print("Error getting object of entity \(self)")
+    return nil
   }
+  assert(result.count <= 1)
+  return result.first as? NSManagedObject
 }
 ```
 
