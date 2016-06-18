@@ -51,9 +51,9 @@ extension Task {
 }
 ```
 
+???
 We define a method we require
 
-???
 We define a single method on class `Task` which gives back an optional `Task` based on provided predicate.
 The method
 
@@ -126,12 +126,12 @@ extension Task {
 ---
 class: center, middle
 
-So we have a non-reusable strongly tied method.
+##So we have a non-reusable strongly tied method
 
 ---
 class: center, middle
 
-####Let's fix it...
+##Let's fix it...
 
 ---
 class: middle
@@ -264,8 +264,8 @@ class: center, middle
 ---
 class: middle, center
 
-####Easy, Right?
-### *NO*
+###Easy, Right?
+## *NO*
 
 ???
 *I wouldn't have added so many negative points to my solution! So obvious 😁*
@@ -273,9 +273,7 @@ class: middle, center
 ---
 class: middle, center
 
-Let us just fix the entity name issue first,
-
-*it isn't so bad..*
+##Let us fix the *entity name* issue first
 
 ---
 class: middle
@@ -299,7 +297,7 @@ extension NSManagedObject {
   class func managedObject(managedObjectContext: NSManagedObjectContext,
                            predicate: NSPredicate?)
                            -> NSManagedObject? {
-*   let fetchRequest = NSFetchRequest(entityName: entityName())
+* let fetchRequest = NSFetchRequest(entityName: entityName())
   fetchRequest.predicate = predicate
   guard let result = try? managedObjectContext.executeFetchRequest(fetchRequest) else {
     print("Error getting object of entity \(self)")
@@ -320,14 +318,14 @@ class: middle, center
 ---
 class: middle, center
 
-####Back to original problem of getting managed classes to answer
+###Back to original problem of getting managed classes to answer
 
-###`object`
+##`object`
 
 ---
 class: center, middle
 
-Enter,
+**Enter,**
 
 #Protocol Extensions
 ##Protocol Extensions
@@ -360,9 +358,9 @@ Some well deserved applause for myself
 ---
 class: middle, center
 
-Any object that wants to work with our model layer is now an
+###Any object that wants to work with our model layer is now an
 
-###`Entity`
+#`Entity`
 
 ---
 class: middle
@@ -394,7 +392,7 @@ remind about entityName slide
 ---
 class: middle
 
-Let us add this to an extension, **on protocol**.
+####Let us add this to an extension, *on protocol*.
 
 ```
 extension Entity
@@ -426,7 +424,7 @@ also tell what self here represents
 ---
 class: middle
 
-Next we add the method `object`
+####  Next we add the method `object`
 ```
 protocol Entity {
   static func object(managedObjectContext: NSManagedObjectContext,
@@ -650,6 +648,16 @@ Explain how it gets entityName() and the default implementation for `object`.
 ---
 class: middle, center
 
+##Sweet!
+##👌
+
+---
+class: middle, center
+
+## Time to see imperfections in our world
+---
+class: middle, center
+
 ####Gotcha #1
 
 ###An associatedType can not be fulfilled by the protocol extension
@@ -662,7 +670,14 @@ class: middle, center
 
 ####Gotcha #2
 
-###Since the protocol extension method returns an instance of type `Self?`, the Swift compiler would not allow any non-final class to use this default implementation!
+###We can not have non-final classes
+
+####Since the protocol extension method returns an instance of type `Self?`, the Swift compiler would not allow any non-final class to use this default implementation!
+
+---
+class: middle, center
+
+![](assets/ProtocolInheritence.png)
 
 ???
 This because, any non-final class `C` is unable to say that when `C` and its subclass `S` conform to the protocol, what type is `Self`.
@@ -673,12 +688,14 @@ class: middle, center
 ##Override?
 
 ???
+for new persistence layer
 Do note that this is the default implementation for the protocol method. Any conforming class can still override it (without explicitly saying override).
 
 ---
 class: middle, center
 
-Now any class conforming to the protocol defines its own context to use. So your `Entity` could be using `NSUserDefaults` as Context and the protocol would not bat an eye!
+###Now any class conforming to the protocol defines its own context to use.
+###So your `Entity` could be using `NSUserDefaults` as Context and the protocol would not bat an eye!
 
 ---
 class: middle
@@ -749,7 +766,10 @@ class: middle
 ```
 func testObjectSavedIsReturned() {
   let moc = testContext()
-  guard let account = NSEntityDescription.insertNewObjectForEntityForName(Account.entityName(), inManagedObjectContext: moc) as? Account else {
+  guard let account = NSEntityDescription
+                      .insertNewObjectForEntityForName(Account.entityName(),
+                        inManagedObjectContext: moc)
+                        as? Account else {
     assertionFailure()
     return
   }
@@ -766,3 +786,9 @@ func testObjectSavedIsReturned() {
 
 ???
 might have named the function account before which changed to this.
+
+---
+class: middle, center
+
+You can get the presentation and test project at
+####https://www.github.com/ayushgoel/wtb
