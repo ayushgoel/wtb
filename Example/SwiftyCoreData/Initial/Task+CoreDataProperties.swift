@@ -14,7 +14,7 @@ import CoreData
 
 extension Task {
 
-    @NSManaged var id: NSDecimalNumber?
+    @NSManaged var id: NSNumber?
     @NSManaged var text: String?
 
 }
