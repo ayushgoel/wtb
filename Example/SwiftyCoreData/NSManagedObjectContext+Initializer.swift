@@ -10,7 +10,7 @@ private func applicationDocumentsDirectory() -> NSURL {
 
 private func managedObjectModel() -> NSManagedObjectModel {
   // The managed object model for the application. This property is not optional. It is a fatal error for the application not to be able to find and load its model.
-  let modelURL = NSBundle.mainBundle().URLForResource("coredata", withExtension: "momd")!
+  let modelURL = NSBundle.mainBundle().URLForResource("SwiftyCoreData", withExtension: "momd")!
   return NSManagedObjectModel(contentsOfURL: modelURL)!
 }
 
@@ -28,7 +28,7 @@ private func persistentStoreCoordinator(directoryURL:NSURL, storeType: String) -
       NSLocalizedFailureReasonErrorKey: "There was an error creating or loading the application's saved data.",
       NSUnderlyingErrorKey: error as NSError
     ]
-    let encapsulatedError = NSError(domain: "CheckvistleErrorDomain", code: 9999, userInfo: dict as [NSObject : AnyObject])
+    let encapsulatedError = NSError(domain: "SwiftyCoreDataErrorDomain", code: 9999, userInfo: dict as [NSObject : AnyObject])
     // Replace this with code to handle the error appropriately.
     // abort() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
     print("Unresolved error \(encapsulatedError), \(encapsulatedError.userInfo)")

@@ -18,6 +18,7 @@
 		8ECB2D0B1D16DA2300911089 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8ECB2D0A1D16DA2300911089 /* Main.storyboard */; };
 		8ECB2D0D1D16DD2F00911089 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8ECB2D0C1D16DD2F00911089 /* LaunchScreen.storyboard */; };
 		8ECB2D101D16DD5700911089 /* SwiftyCoreData.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 8ECB2D0E1D16DD5700911089 /* SwiftyCoreData.xcdatamodeld */; };
+		8ECB2D121D16E1E900911089 /* NSManagedObjectContext+Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ECB2D111D16E1E900911089 /* NSManagedObjectContext+Helpers.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -46,6 +47,7 @@
 		8ECB2D0A1D16DA2300911089 /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
 		8ECB2D0C1D16DD2F00911089 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
 		8ECB2D0F1D16DD5700911089 /* SwiftyCoreData.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = SwiftyCoreData.xcdatamodel; sourceTree = "<group>"; };
+		8ECB2D111D16E1E900911089 /* NSManagedObjectContext+Helpers.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSManagedObjectContext+Helpers.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -71,6 +73,7 @@
 			children = (
 				8ECB2CF01D16D34A00911089 /* NSManagedObjectContext+Initializer.swift */,
 				8ECB2CF21D16D36E00911089 /* NSManagedObjectContext+TestingInitializer.swift */,
+				8ECB2D111D16E1E900911089 /* NSManagedObjectContext+Helpers.swift */,
 				8ECB2D0E1D16DD5700911089 /* SwiftyCoreData.xcdatamodeld */,
 				8ECB2CFC1D16D72200911089 /* AppDelegate.swift */,
 				8ECB2CFD1D16D72200911089 /* Assets.xcassets */,
@@ -219,6 +222,7 @@
 				8ECB2D101D16DD5700911089 /* SwiftyCoreData.xcdatamodeld in Sources */,
 				8ECB2D081D16D72200911089 /* ViewController.swift in Sources */,
 				8ECB2CF81D16D5EC00911089 /* Task.swift in Sources */,
+				8ECB2D121D16E1E900911089 /* NSManagedObjectContext+Helpers.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -391,6 +395,7 @@
 				8ECB2CEA1D168A2100911089 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		8ECB2CEB1D168A2100911089 /* Build configuration list for PBXNativeTarget "Attemp1Tests" */ = {
 			isa = XCConfigurationList;
@@ -399,6 +404,7 @@
 				8ECB2CED1D168A2100911089 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 
