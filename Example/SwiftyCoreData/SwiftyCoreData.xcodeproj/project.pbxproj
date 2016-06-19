@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		8E1D8DF61D16F34A00F80001 /* Task+Getter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E1D8DF51D16F34A00F80001 /* Task+Getter.swift */; };
 		8E1D8DFB1D17027100F80001 /* SwiftyCoreData.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 8E1D8DF91D17027100F80001 /* SwiftyCoreData.xcdatamodeld */; };
+		8E1D8DFE1D17073A00F80001 /* SwiftyCoreData.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 8E1D8DF91D17027100F80001 /* SwiftyCoreData.xcdatamodeld */; };
+		8E1D8DFF1D17073C00F80001 /* SwiftyCoreData.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 8E1D8DF91D17027100F80001 /* SwiftyCoreData.xcdatamodeld */; };
 		8ECB2CE61D168A2100911089 /* Attemp1Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ECB2CE51D168A2100911089 /* Attemp1Tests.swift */; };
 		8ECB2CF11D16D34A00911089 /* NSManagedObjectContext+Initializer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ECB2CF01D16D34A00911089 /* NSManagedObjectContext+Initializer.swift */; };
 		8ECB2CF71D16D5EC00911089 /* Task+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ECB2CF51D16D5EC00911089 /* Task+CoreDataProperties.swift */; };
@@ -468,6 +470,7 @@
 				8ECB2CF11D16D34A00911089 /* NSManagedObjectContext+Initializer.swift in Sources */,
 				8ECB2CF71D16D5EC00911089 /* Task+CoreDataProperties.swift in Sources */,
 				8ECB2D041D16D72200911089 /* AppDelegate.swift in Sources */,
+				8E1D8DFE1D17073A00F80001 /* SwiftyCoreData.xcdatamodeld in Sources */,
 				8ECB2D081D16D72200911089 /* ViewController.swift in Sources */,
 				8ECB2CF81D16D5EC00911089 /* Task.swift in Sources */,
 				8ECB2D121D16E1E900911089 /* NSManagedObjectContext+Helpers.swift in Sources */,
@@ -514,6 +517,7 @@
 				8ECB2D6B1D16E51A00911089 /* Task+CoreDataProperties.swift in Sources */,
 				8ECB2D6D1D16E54500911089 /* NSManagedObjectContext+TestingInitializer.swift in Sources */,
 				8ECB2D701D16E55000911089 /* AppDelegate.swift in Sources */,
+				8E1D8DFF1D17073C00F80001 /* SwiftyCoreData.xcdatamodeld in Sources */,
 				8ECB2D6C1D16E54500911089 /* NSManagedObjectContext+Initializer.swift in Sources */,
 				8ECB2D741D16E55000911089 /* ViewController.swift in Sources */,
 				8ECB2D6A1D16E51A00911089 /* Task.swift in Sources */,
