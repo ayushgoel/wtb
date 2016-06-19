@@ -280,7 +280,7 @@ class: middle
 
 ```
 extension NSManagedObject {
-  class func entityName() -> String {
+  class func name() -> String {
     return NSStringFromClass(self)
 *   .componentsSeparatedByString(".").last! // *
   }
@@ -297,7 +297,7 @@ extension NSManagedObject {
   class func managedObject(managedObjectContext: NSManagedObjectContext,
                            predicate: NSPredicate?)
                            -> NSManagedObject? {
-* let fetchRequest = NSFetchRequest(entityName: entityName())
+* let fetchRequest = NSFetchRequest(entityName: name())
   fetchRequest.predicate = predicate
   guard let result = try? managedObjectContext.executeFetchRequest(fetchRequest) else {
     print("Error getting object of entity \(self)")
@@ -387,7 +387,7 @@ class: middle, center
 ###We know what this method has to do for `NSManagedObject`
 
 ???
-remind about entityName slide
+remind about name slide
 
 ---
 class: middle
@@ -397,7 +397,7 @@ class: middle
 ```
 extension Entity
   where Self: NSManagedObject {
-  static func entityName() -> String {
+  static func name() -> String {
     return NSStringFromClass(self)
     .componentsSeparatedByString(".").last!
   }
@@ -410,7 +410,7 @@ class: middle
 ```
 extension Entity
 * where Self: NSManagedObject {
-  static func entityName() -> String {
+  static func name() -> String {
     return NSStringFromClass(self)
     .componentsSeparatedByString(".").last!
   }
@@ -542,7 +542,7 @@ class: middle
 ```
 extension Entity where Context == NSManagedObjectContext {
   static func object(context: Context, predicate: NSPredicate?) -> Self? {
-  let req = NSFetchRequest(entityName: entityName())
+  let req = NSFetchRequest(entityName: name())
   req.predicate = predicate
   guard let result = try? context.executeFetchRequest(req) else {
     logger.error("Error getting object of entity \(self)")
@@ -591,11 +591,11 @@ so autocomplete FTW
 class: middle
 
 ```
-let req = NSFetchRequest(entityName: entityName())
+let req = NSFetchRequest(entityName: name())
 ```
 
 ???
-Explain that entityName() is given in protocol and thus safe to call by the extension method.
+Explain that name() is given in protocol and thus safe to call by the extension method.
 
 ---
 class: middle
@@ -613,7 +613,7 @@ class: middle
 ```
 extension Entity where Context == NSManagedObjectContext {
   static func object(context: Context, predicate: NSPredicate?) -> Self? {
-  let req = NSFetchRequest(entityName: entityName())
+  let req = NSFetchRequest(entityName: name())
   req.predicate = predicate
   guard let result = try? context.executeFetchRequest(req) else {
     logger.error("Error getting object of entity \(self)")
@@ -643,7 +643,7 @@ extension Task: Entity {
 ```
 
 ???
-Explain how it gets entityName() and the default implementation for `object`.
+Explain how it gets name() and the default implementation for `object`.
 
 ---
 class: middle, center
@@ -704,13 +704,13 @@ class: middle
 final class Account {
   typealias Context = NSUserDefaults
 
-  static func entityName() -> String {
+  static func name() -> String {
     return "KeyForAccountInUserDefaults"
   }
 
   class func object(context: Context,
                     predicate: NSPredicate?) -> Account? {
-    return context.objectForKey(entityName()) as? Account
+    return context.objectForKey(name()) as? Account
   }
 }
 ```
@@ -753,8 +753,8 @@ name changes maybe again
 class: middle
 
 ```
-func testEntityName() {
-  XCTAssertEqual("Account", Account.entityName())
+func testName() {
+  XCTAssertEqual("Account", Account.name())
 }
 ```
 
@@ -767,7 +767,7 @@ class: middle
 func testObjectSavedIsReturned() {
   let moc = testContext()
   guard let account = NSEntityDescription
-                      .insertNewObjectForEntityForName(Account.entityName(),
+                      .insertNewObjectForEntityForName(Account.name(),
                         inManagedObjectContext: moc)
                         as? Account else {
     assertionFailure()
