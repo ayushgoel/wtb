@@ -12,6 +12,9 @@
 		8E1D8DFD1D17061700F80001 /* NSManagedObject+Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E1D8DFC1D17061700F80001 /* NSManagedObject+Helpers.swift */; };
 		8E1D8DFE1D17073A00F80001 /* SwiftyCoreData.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 8E1D8DF91D17027100F80001 /* SwiftyCoreData.xcdatamodeld */; };
 		8E1D8DFF1D17073C00F80001 /* SwiftyCoreData.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 8E1D8DF91D17027100F80001 /* SwiftyCoreData.xcdatamodeld */; };
+		8E1D8E011D1707BD00F80001 /* Entity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E1D8E001D1707BD00F80001 /* Entity.swift */; };
+		8E1D8E031D1707EB00F80001 /* Entity+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E1D8E021D1707EB00F80001 /* Entity+Extensions.swift */; };
+		8E1D8E051D1708EC00F80001 /* Task+Entity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E1D8E041D1708EC00F80001 /* Task+Entity.swift */; };
 		8ECB2CE61D168A2100911089 /* Attemp1Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ECB2CE51D168A2100911089 /* Attemp1Tests.swift */; };
 		8ECB2CF11D16D34A00911089 /* NSManagedObjectContext+Initializer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ECB2CF01D16D34A00911089 /* NSManagedObjectContext+Initializer.swift */; };
 		8ECB2CF71D16D5EC00911089 /* Task+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ECB2CF51D16D5EC00911089 /* Task+CoreDataProperties.swift */; };
@@ -75,6 +78,9 @@
 		8E1D8DF51D16F34A00F80001 /* Task+Getter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Task+Getter.swift"; sourceTree = "<group>"; };
 		8E1D8DFA1D17027100F80001 /* SwiftyCoreData.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = SwiftyCoreData.xcdatamodel; sourceTree = "<group>"; };
 		8E1D8DFC1D17061700F80001 /* NSManagedObject+Helpers.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSManagedObject+Helpers.swift"; sourceTree = "<group>"; };
+		8E1D8E001D1707BD00F80001 /* Entity.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Entity.swift; sourceTree = "<group>"; };
+		8E1D8E021D1707EB00F80001 /* Entity+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Entity+Extensions.swift"; sourceTree = "<group>"; };
+		8E1D8E041D1708EC00F80001 /* Task+Entity.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Task+Entity.swift"; sourceTree = "<group>"; };
 		8ECB2CCB1D168A2000911089 /* Attemp1.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Attemp1.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8ECB2CDC1D168A2100911089 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8ECB2CE11D168A2100911089 /* Attemp1Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Attemp1Tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -232,6 +238,9 @@
 			children = (
 				8ECB2D681D16E51A00911089 /* Task.swift */,
 				8ECB2D691D16E51A00911089 /* Task+CoreDataProperties.swift */,
+				8E1D8E041D1708EC00F80001 /* Task+Entity.swift */,
+				8E1D8E001D1707BD00F80001 /* Entity.swift */,
+				8E1D8E021D1707EB00F80001 /* Entity+Extensions.swift */,
 				8ECB2D561D16E4CB00911089 /* Info.plist */,
 			);
 			path = Final;
@@ -517,11 +526,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8E1D8E031D1707EB00F80001 /* Entity+Extensions.swift in Sources */,
 				8ECB2D6E1D16E54500911089 /* NSManagedObjectContext+Helpers.swift in Sources */,
 				8ECB2D6B1D16E51A00911089 /* Task+CoreDataProperties.swift in Sources */,
+				8E1D8E051D1708EC00F80001 /* Task+Entity.swift in Sources */,
 				8ECB2D6D1D16E54500911089 /* NSManagedObjectContext+TestingInitializer.swift in Sources */,
 				8ECB2D701D16E55000911089 /* AppDelegate.swift in Sources */,
 				8E1D8DFF1D17073C00F80001 /* SwiftyCoreData.xcdatamodeld in Sources */,
+				8E1D8E011D1707BD00F80001 /* Entity.swift in Sources */,
 				8ECB2D6C1D16E54500911089 /* NSManagedObjectContext+Initializer.swift in Sources */,
 				8ECB2D741D16E55000911089 /* ViewController.swift in Sources */,
 				8ECB2D6A1D16E51A00911089 /* Task.swift in Sources */,
