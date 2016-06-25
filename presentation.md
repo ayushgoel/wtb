@@ -836,6 +836,10 @@ Explain how the persistence layer has been abstracted out. This class's object
 can now be kept in an array [Entity] and worked on by functions.
 
 ---
+class: middle
+
+![](assets/Layering.png)
+---
 class: middle, center
 
 #Testing
