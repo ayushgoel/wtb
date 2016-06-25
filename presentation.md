@@ -138,6 +138,8 @@ extension Task {
 ???
 * even fetch request requires your class's name
 * as referenced in model
+* fragile
+  * as name changing breaks
 
 ---
 class: center, middle
@@ -261,7 +263,7 @@ extension NSManagedObject {
   class func managedObject(managedObjectContext: NSManagedObjectContext,
                            predicate: NSPredicate?)
                            -> NSManagedObject? {
-*   let fetchRequest = NSFetchRequest(entityName: "Task")
+* let fetchRequest = NSFetchRequest(entityName: "Task")
   fetchRequest.predicate = predicate
   guard let result = try? managedObjectContext.executeFetchRequest(fetchRequest) else {
     print("Error getting object of entity \(self)")
@@ -537,7 +539,7 @@ protocol Entity {
 ```
 
 ???
-* prediates are persistence layer agnostic
+* predicates are persistence layer agnostic
 * conforming class defines Context
 
 ---
@@ -832,8 +834,11 @@ final class Account: Entity {
 ```
 
 ???
-Explain how the persistence layer has been abstracted out. This class's object
-can now be kept in an array [Entity] and worked on by functions.
+* another simple class
+* Not inheriting from any class
+* Use NSUserDefaults as persistence
+* persistence layer abstracted out in Entity
+* [Entity] can have any classes
 
 ---
 class: middle
@@ -905,7 +910,8 @@ func testObjectSavedIsReturned() {
 ```
 
 ???
-might have named the function account before which changed to this.
+* No presence of Entity
+* `task` -> `object`
 
 ---
 class: middle, center
