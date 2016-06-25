@@ -7,10 +7,8 @@ class: center, middle
 ???
 
 * INTRODUCTION
-* AGENDA
 
-1. NSManagedObject extensions: Protocol extensions to the rescue
-How I used protocol extension to extend data layer classes and have them some commonly used functions.
+1. How I used protocol extensions to extend my data layer classes and have commonly used functions extracted out from them.
 2. Using Protocols to hide away persistence layer
 3. Testing the created protocols
 
