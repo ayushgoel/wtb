@@ -937,4 +937,13 @@ You can get the presentation and test project at
 ####https://www.github.com/ayushgoel/wtb
 
 ???
-* not watched Star Trek. Just picked up to show off.
+* not watched Star Trek. "Live long and prosper!" Just picked up to show off.
+
+---
+
+class: middle
+
+###References:
+1. [Protocol Extensions - Apple Doc](https://developer.apple.com/library/ios/documentation/Swift/Conceptual/Swift_Programming_Language/Protocols.html#//apple_ref/doc/uid/TP40014097-CH25-ID267)
+2. Protocol-Oriented Programming in Swift - https://developer.apple.com/videos/play/wwdc2015/408/
+3. Practical Protocol-Oriented-Programming - https://realm.io/news/appbuilders-natasha-muraschev-practical-protocol-oriented-programming/
