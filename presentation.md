@@ -384,7 +384,7 @@ class: center, middle
 
 #👏
 ###Because naming is important
-![](assets/names.png)
+![](names.png)
 
 Credits: [xkcd](https://xkcd.com/302/)
 

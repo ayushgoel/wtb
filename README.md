@@ -15,3 +15,4 @@ The following files are Copyright Ayush Goel. You may not reuse anything therein
 * presentation.css
 * presentation.html
 * presentation.md
+* assets/
