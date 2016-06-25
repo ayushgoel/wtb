@@ -928,6 +928,14 @@ String(Class_Name)
 * Module name is not prepended to class name this way.
 
 ---
+class: middle
+
+###References:
+1. [Protocol Extensions - Apple Doc](https://developer.apple.com/library/ios/documentation/Swift/Conceptual/Swift_Programming_Language/Protocols.html#//apple_ref/doc/uid/TP40014097-CH25-ID267)
+2. Protocol-Oriented Programming in Swift - https://developer.apple.com/videos/play/wwdc2015/408/
+3. Practical Protocol-Oriented-Programming - https://realm.io/news/appbuilders-natasha-muraschev-practical-protocol-oriented-programming/
+
+---
 class: middle, center
 
 ###Thanks!
@@ -936,14 +944,10 @@ class: middle, center
 You can get the presentation and test project at
 ####https://www.github.com/ayushgoel/wtb
 
+<br/>
+<br/>
+You can know about me at
+####http://blog.techmyway.com/me.html
+
 ???
 * not watched Star Trek. "Live long and prosper!" Just picked up to show off.
-
----
-
-class: middle
-
-###References:
-1. [Protocol Extensions - Apple Doc](https://developer.apple.com/library/ios/documentation/Swift/Conceptual/Swift_Programming_Language/Protocols.html#//apple_ref/doc/uid/TP40014097-CH25-ID267)
-2. Protocol-Oriented Programming in Swift - https://developer.apple.com/videos/play/wwdc2015/408/
-3. Practical Protocol-Oriented-Programming - https://realm.io/news/appbuilders-natasha-muraschev-practical-protocol-oriented-programming/
